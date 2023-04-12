@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <title>News</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bolo is creative one page website template">
+    <meta name="author" content="">
+
+    <!--[if lt IE 9]>
+    <script src="../../../static/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- CSS Files
+    ================================================== -->
+    <link rel="stylesheet" href="../../../static/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="../../../static/css/bootstrap-grid.min.css" type="text/css">
+	<link rel="stylesheet" href="../../../static/css/bootstrap-reboot.min.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/animate.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.carousel.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.theme.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.transitions.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/jquery.countdown.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/style.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/colors/red.css" type="text/css">
+
+    <!--element css-->
+    <link rel="stylesheet" type="text/css" href="../../../static/css/element.css"/>
+
+    <!--vue and element js-->
+    <!--NOTE: vue.js should be imported before element.js-->
+    <script src="../../../static/js/vue.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--axios-->
+    <script src="../../../static/js/axios.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <style>
+        /*for scrolling news*/
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 15px;
+            opacity: 0.75;
+            line-height: 30px;
+            margin: 0;
+        }
+        .el-carousel__item h2 {
+            color: #475669;
+            font-size: 12px;
+            opacity: 0.75;
+            line-height: 0px;
+            margin: 0;
+        }
+
+        /*for cards*/
+        .cardList {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .cardList  .el-card {
+            height: 280px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+    <div id="wrapper">
+
+        <div class="page-overlay">
+            <div class="preloader-wrap">
+                <div class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- header begin -->
+        <header>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- logo begin -->
+                        <div id="logo">
+                            <a href="index.html">
+<!--                                <img class="logo" src="../../../static/images/logo-light.png" alt="">-->
+<!--                                <img class="logo-2" src="../../../static/images/logo-dark.png" alt="">-->
+                                <img class="logo" width="100px" height="50px" src="../../../static/images/logo2.png">
+                                <img class="logo-2" width="100px" height="50px" src="../../../static/images/logo2.png">
+                            </a>
+                        </div>
+                        <!-- logo close -->
+
+                        <!-- small button begin -->
+                        <span id="menu-btn"></span>
+                        <!-- small button close -->
+
+                        <!-- mainmenu begin -->
+                        <nav>
+                            <ul id="mainmenu">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="news.html">News</a></li>
+                                <li><a href="industry.html">Industry</a></li>
+                                <li><a href="https://epiphany-citi.my.canva.site/" target="_blank">Demo</a></li>
+                            </ul>
+                        </nav>
+						<!-- mainmenu close -->
+
+                    </div>
+
+                </div>
+            </div>
+        </header>
+        <!-- header close -->
+
+        <!-- content begin -->
+        <div id="content" class="no-bottom no-top">
+            <div id="top"></div>
+            <br><br><br><br><br>
+
+            <!-- section begin -->
+            <!-- scrolling news list -->
+            <template>
+                <el-carousel
+                    indicator-position="outside"
+                    :interval="4000"
+                    arrow="always"
+                    type="card"
+                    height="350px"
+                    :autoplay="true">
+                    <el-carousel-item align="center" v-for="(news, index) in scrollNewsList" :key="index">
+                        <a :href="news.url" target="_blank">
+                            <img :src="news.pic_url" width="400px" height=280px">
+                        </a>
+                        <h3 class="medium" align="center" v-text="news.title" style="width: 90%"></h3>
+                        <h2 class="medium" align="center" v-text="news.source+'   '+news.publish_time.split(' ')[0]" style="width: 90%"></h2>
+                    </el-carousel-item>
+                </el-carousel>
+            </template>
+            <el-divider></el-divider>
+            <!-- section close -->
+			
+			<!-- section begin -->
+            <!-- card news list -->
+            <el-container>
+                <el-aside width="100px"></el-aside>
+                <el-main>
+                    <template>
+                        <h3 style="font-size: 16px" align="center">按环境(E)、社会(S)、公司管治(G)划分的新闻资讯</h3>
+                        <el-select v-model="topNewsCid"
+                                   placeholder="新闻类别"
+                                   @change="handleTopNewsChange">
+                            <el-option
+                                v-for="item in topNewsOption"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </template>
+                    <br><br>
+
+                    <template>
+                        <el-row :gutter="20" v-for="i in pagination.pageSize/4+1" :key="i" class="cardList">
+                            <el-col v-for="(news, index) in cardNewsList.slice((i-1)*4, i*4)" :key="index" :span="6">
+                                <el-card class="cardNews">
+                                    <a :href="news.url" target="_blank">
+                                        <img align="center" :src="news.pic_url" width="180px" height="160px"/>
+                                        <h3 style="font-size: 13px" v-text="news.title"></h3>
+                                        <h3 style="font-size: 13px" v-text="news.source+'\t'+news.publish_time.split(' ')[0]"></h3>
+                                    </a>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+
+                    </template>
+                    <br>
+
+                    <template>
+                        <!-- pagination -->
+                        <div class="block" align="center">
+                            <el-pagination
+                                    @size-change="handleSizeChange"
+                                    @current-change="handleCurrentChange"
+                                    :current-page="pagination.currentPage"
+                                    :page-sizes="[12, 24, 48]"
+                                    :page-size="pagination.pageSize"
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="pagination.total">
+                            </el-pagination>
+                        </div>
+                    </template>
+                    <br>
+
+                    <!-- nlp result -->
+                    <template>
+                      <div id="chinese_nlp">
+                          <el-table :data="cardNewsNLP">
+                              <el-table-column align="center" prop="total" label="近一年新闻情感分析">
+                              </el-table-column>
+
+                              <el-table-column align="center" prop="pos" label="正面">
+                              </el-table-column>
+
+                              <el-table-column align="center" prop="nn" label="中性/负面">
+                              </el-table-column>
+                          </el-table>
+                      </div>
+                    </template>
+
+                </el-main>
+                <el-aside width="100px"></el-aside>
+            </el-container>
+            <!-- section close -->
+
+            <el-divider></el-divider>
+
+            <!-- table for eng esg news -->
+            <el-container>
+                <el-aside width="100px"></el-aside>
+                <el-main>
+                    <h3 style="font-size: 15px" align="center">International ESG news</h3>
+                    <el-table
+                        :data="engNewsList"
+                        style="width: 100%"
+                        height="300">
+
+                        <el-table-column
+                            label=""
+                            align="center">
+                            <template slot-scope="scope">
+                                 <img height="70px" width="90px" :src="(scope.row.pic_url)"/>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="title"
+                            label="Title (click for details)"
+                            align="center"
+                            width="420px">
+                            <template slot-scope="scope">
+                                <a :href="(scope.row.url)" target="_blank" v-text="scope.row.title"></a>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="description"
+                            label="Description"
+                            align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                            prop="date"
+                            label="Date"
+                            align="center">
+                        </el-table-column>
+
+                    </el-table>
+
+                    <br>
+
+                    <!-- nlp result -->
+                    <template>
+                        <div id="eng_nlp">
+                            <el-table :data="engNewsNLP">
+                                <el-table-column align="center" prop="total" label="News Sentiment for news in one year">
+                                </el-table-column>
+
+                                <el-table-column align="center" prop="pos" label="Positive">
+                                </el-table-column>
+
+                                <el-table-column align="center" prop="nn" label="Neutral/Negative">
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </template>
+
+                    <div v-for="i in 3">
+                        <br>
+                    </div>
+
+                    <!-- crawler source -->
+                    <h3 align="center" style="font-size: 12px; background-color: white">以上数据爬取自:
+                        <a href="https://finance.sina.com.cn/esg/" target="_blank">新浪财经</a>、
+                        <a href="https://www.scmp.com/topics/esg-investing" target="_blank">South China Morning Post</a>、
+                        <a href="https://esgnews.com/" target="_blank">ESG News</a>
+                    </h3>
+                    <!-- crawler source end -->
+
+                </el-main>
+                <el-aside width="100px"></el-aside>
+            </el-container>
+
+            <!-- content close -->
+
+            </div>
+            <!-- content close -->
+
+
+            <a href="#" id="back-to-top"></a>
+
+            <div id="preloader">
+                <div class="preloader1"></div>
+            </div>
+
+        </div>
+    </div>
+
+        <!-- Javascript Files
+    ================================================== -->
+        <script src="../../../static/js/jquery.min.js"></script>
+        <script src="../../../static/js/bootstrap.min.js"></script>
+        <script src="../../../static/js/jquery.isotope.min.js"></script>
+        <script src="../../../static/js/easing.js"></script>
+        <script src="../../../static/js/owl.carousel.js"></script>
+        <script src="../../../static/js/jquery.countTo.js"></script>
+        <script src="../../../static/js/wow.min.js"></script>
+        <script src="../../../static/js/jquery.magnific-popup.min.js"></script>
+        <script src="../../../static/js/enquire.min.js"></script>
+        <script src="../../../static/js/jquery.stellar.min.js"></script>
+        <script src="../../../static/js/jquery.plugin.js"></script>
+		<script src="../../../static/js/jquery.easeScroll.js"></script>
+        <script src="../../../static/js/designesia.js"></script>
+        <script src="../../../static/js/validation.js"></script>
+</body>
+
+<script src="../../../static/js/config/encap.js"></script>
+
+<script>
+    const vue = new Vue({
+        el: "#app",
+        data() {
+            return {
+                scrollNewsList: [],
+                sizeOfScrollNewsList: 15,
+                cardNewsList: [],
+                cardNewsNLP: [{
+                    "pos": 0,
+                    "nn": 0,
+                    "total": 0,
+                }],
+                topNewsOption: [
+                    // {label: '主要新闻', value: '244215'},
+                    {label: '环境保护', value: '247831'},
+                    {label: '社会责任', value: '247832'},
+                    {label: '公司管治', value: '247833'},
+                    // {label: 'ESG投资', value: '248417'}
+                ],
+                topNewsCid: "247831",
+                pagination: {
+                    currentPage: 1,
+                    pageSize: 12,
+                    total: 12,
+                },
+                engNewsList: [],
+                engNewsNLP: [{
+                    "pos": 0,
+                    "nn": 0,
+                    "total": 0,
+                }],
+            }
+        },
+        methods: {
+            getScrollNewsList() {
+                url = `/companies/topnews/244215/1/${this.sizeOfScrollNewsList}/`;
+                myAxios("get", url).then((res) => {
+                    this.scrollNewsList = res.data.data.top_news.list;
+                    console.log(this.scrollNewsList);
+                })
+            },
+            getCardNewsList() {
+                url = `/companies/topnews/${this.topNewsCid}/${this.pagination.currentPage}/${this.pagination.pageSize}/`;
+                myAxios("get", url).then((res => {
+                    this.cardNewsList = res.data.data.top_news.list;
+                    this.pagination.total = res.data.data.total;
+                    var nlp = res.data.data.emotion.list;
+                    this.cardNewsNLP[0].pos = nlp.filter(x => x===1).length;
+                    this.cardNewsNLP[0].nn = nlp.filter(x => x===0).length;
+                    this.cardNewsNLP[0].total = this.cardNewsNLP[0].pos + this.cardNewsNLP[0].nn;
+                    console.log(this.cardNewsNLP);
+                }))
+            },
+            getEngNewsList() {
+                url = "/companies/topnews/eng/";
+                myAxios("get", url).then((res) => {
+                    this.engNewsList = res.data.data.list;
+                    var nlp = res.data.data.emotion.list;
+                    this.engNewsNLP[0].pos = nlp.filter(x => x===1).length;
+                    this.engNewsNLP[0].nn = nlp.filter(x => x===0).length;
+                    this.engNewsNLP[0].total = this.engNewsNLP[0].pos + this.engNewsNLP[0].nn;
+                    console.log(this.engNewsNLP);
+                })
+            },
+            handleTopNewsChange() {
+                this.getCardNewsList();
+            },
+            handleCurrentChange(val) {
+                this.pagination.currentPage = val;
+                this.getCardNewsList();
+            },
+            handleSizeChange(val) {
+                this.pagination.pageSize = val;
+                this.getCardNewsList();
+            },
+        },
+        mounted() {
+            this.getScrollNewsList();
+            this.getCardNewsList();
+            this.getEngNewsList();
+        }
+    })
+</script>
+
+</html>

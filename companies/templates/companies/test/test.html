@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+  var themes = [
+			{
+				name:"Climate Change",
+				classification:"Environment",
+				issues: [
+					{
+						name: "Carbon Emissions",
+						description:"Companies are evaluated on the carbon intensity of their operations and their efforts to manage climate-related risks and opportunities."
+					},
+					{
+						name:"Product Carbon Footprint",
+						description:"Companies are evaluated on the carbon intensity of their products and their ability to reduce the carbon footprint in their supply chains or in the use of their products and services."
+					},
+					{
+						name:"Climate Change Vulnerability",
+						description:"Insurance companies are assessed on the physical risk that climate change may pose to insured assets or individuals."
+					},
+					{
+						name:"Financing Environmental Impact",
+						description:"Financial institutions are evaluated on the environmental risks of their lending and underwriting activities and their ability to capitalize on opportunities related to green finance."
+					},
+				]
+			},
+			{
+				name:"Natural Capital",
+				classification:"Environment",
+				issues: [
+					{
+						name:"Water Stress",
+						description:"Companies are evaluated on the water intensity of their operations, the water stress in their areas of operation and their efforts to manage water-related risks and opportunities."
+					},
+					{
+						name:"Biodiversity & Land Use",
+						description:"Companies are evaluated on the potential impact of their operations on biodiversity in their areas of operation and their efforts to manage the environmental impact of their operations. "
+					},
+					{
+						name:"Raw Material Sourcing",
+						description:"Companies are evaluated on the environmental impacts of the raw materials used in their products and their efforts around supply chain traceability and certification"
+					}
+				]
+			},
+			{
+				name:"Pollution and Waste",
+				classification:"Environment",
+				issues: [
+					{
+						name:"Toxic Emissions & Waste",
+						description:"Companies are evaluated on the potential environmental contamination and toxic or carcinogenic emissions arising from their operations and the strength of their environmental management systems."
+					},
+					{
+						name:"Packaging Material & Waste",
+						description:"Companies are evaluated on their production of or reliance upon packaging materials, their potential exposure to waste management and packaging regulations and their efforts to reduce the environmental impact of packaging materials."
+					},
+					{
+						name:"Electronic Waste",
+						description:"Companies are evaluated on their production of electronic waste, their potential exposure to e-waste regulations and their efforts around product collection and recycling."
+					}
+				]
+			},
+			{
+				name:"Environmental Opportunities",
+				classification:"Environment",
+				issues: [
+					{
+						name:"Opportunities in Clean Tech",
+						description:"Companies are evaluated on their clean tech innovation capacity, strategic development initiatives, and revenue generated from clean technologies."
+					},
+					{
+						name:"Opportunities in Green Building",
+						description:"Companies are evaluated based on the resource consumption and carbon intensity of their property assets, their potential exposure to environmental building regulations and their efforts to improve the environmental performance of their real estate assets."
+					},
+					{
+						name:"Opportunities in Renewable Energy",
+						description:"Companies are evaluated on their efforts to develop renewable power generation capacity and/or enable renewable power development through network expansion and \"green power\" offerings."
+					}
+				]
+			},
+			{
+				name:"Human Capital",
+				classification:"Social",
+				issues: [
+					{
+						name:"Labor Management",
+						description:"Companies are evaluated on the complexity of their workforce (size, labor intensity, and regions of operation), the relationship between management and labor, the strength of worker protections, and their employee engagement efforts. "
+					},
+					{
+						name:"Health & Safety",
+						description:"Companies are evaluated on their management of workplace safety and the workplace safety standards in the industries and regions in which they operate."
+					},
+					{
+						name:"Human Capital Development",
+						description:"Companies are evaluated on their workforce talent requirements and their ability to attract, retain, and develop a highly skilled workforce."
+					},
+					{
+						name:"Supply Chain Labor Standards",
+						description:"Companies are evaluated on the management and transparency of their supply chain and the working standards in the regions in which their suppliers are located."
+					}
+				]
+			},
+			{
+				name:"Product Liability",
+				classification:"Social",
+				issues: [
+					{
+						name:"Product Safety & Quality",
+						description:"Companies are evaluated on their exposure to possible recalls or product safety concerns, the strength of their supply chain and sourcing systems, their quality management efforts in manufacturing and their responsible marketing practices. "
+					},
+					{
+						name:"Chemical Safety",
+						description:"Companies are evaluated on the possible presence of harmful chemicals in their product portfolio, their potential exposure to strengthening or pending chemical regulations and their efforts to develop less harmful alternatives."
+					},
+					{
+						name:"Consumer Financial Protection",
+						description:"Financial institutions are evaluated on product stewardship and transparency, including efforts to mitigate potential reputational and regulatory risks arising from unethical lending practices or mis-selling financial products to consumers."
+					},
+					{
+						name:"Privacy & Data Security",
+						description:"Companies are evaluated on the amount of personal data they collect, their exposure to evolving or increasing privacy regulations, their vulnerability to potential data breaches, and their systems for protecting personal data."
+					},
+					{
+						name:"Insuring Health & Demographic Risk",
+						description:"Insurance companies are evaluated on their management of emerging social risks and their development of insurance products to address emerging needs that may arise from major public health and demographic trends."
+					},
+					{
+						name:"Responsible Investment",
+						description:"Companies are evaluated on their integration of environmental, social and governance considerations in the management of their own assets or the assets they manage on behalf of others."
+					}
+				]
+			},
+			{
+				name:"Stakeholder Opposition",
+				classification:"Social",
+				issues: [
+					{
+						name:"Community Relations",
+						description:"Companies are evaluated on their management of local community relations, policies on conflict and human rights, and efforts to distribute benefits to local communities."
+					},
+					{
+						name:"Controversial Sourcing",
+						description:"Companies are evaluated on their dependence on and purchasing volume of raw materials procured from conflict areas and their efforts around traceability and certification. "
+					}
+				]
+			},
+			{
+				name:"Social Opportunities",
+				classification:"Social",
+				issues: [
+
+					{
+						name:"Access to Communications",
+						description:"Companies are evaluated on their efforts to expand connectivity and access to information in developing countries and historically underserved markets (e.g. rural, elderly)."
+					},
+					{
+						name:"Access to Finance",
+						description:"Companies are evaluated on their efforts to expand financial services to historically underserved markets, including small business lending and the development of innovative distribution channels."
+					},
+					{
+						name:"Access to Health Care",
+						description:"Companies are evaluated on their efforts to expand health care products and services to developing countries and underserved markets (e.g. low regional physician concentration), including equitable pricing mechanisms, patents, capacity advancement and product donations."
+					},
+					{
+						name:"Opportunities in Nutrition & Health",
+						description:"Companies are evaluated on the nutritional content of their food products and their efforts to introduce products with an improved nutritional or health profile."
+					}
+				]
+
+			},
+			{
+				name:"Corporate Governance",
+				classification:"Governance",
+				notitle:true,
+				issues: [
+					{
+						name:"Governance",
+						description:"This pillar evaluates the impact companies' corporate governance and business ethics practices have on investors. All companies are assessed on all Governance Key Issues, including Ownership & Control, Board, Pay, Accounting, Business Ethics, and Tax Transparency."
+					}
+				]
+			},
+			{
+				name:"Corporate Governance",
+				classification:"Governance",
+				issues: [
+					{
+						name:"Ownership & Control",
+						noflip:true,
+						description:"Companies are evaluated on their equity ownership structure and its potential impact on shareholder rights and the interests of other investors. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					},
+					{
+						name:"Board",
+						noflip:true,
+						description:"Companies are evaluated on the effectiveness of their board in overseeing management and corporate strategy, protecting investor value, and representing the interests of shareholders. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					},
+					{
+						name:"Pay",
+						noflip:true,
+						description:"Companies are evaluated on the alignment between their pay and other incentive practices and corporate strategy. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					},
+					{
+						name:"Accounting",
+						noflip:true,
+						description:"Companies are evaluated on the transparency, independence and effectiveness of their audit and financial reporting practices. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					}
+				]
+			},
+			{
+				name:"Corporate Behaviour",
+				classification:"Governance",
+				issues: [
+					{
+						name:"Business Ethics",
+						noflip:true,
+						description:"Companies are evaluated on their oversight and management of business ethics issues such as fraud, executive misconduct, corrupt practices, money laundering, or anti-trust violations. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					},
+					{
+						name:"Tax Transparency",
+						noflip:true,
+						description:"Companies are evaluated on their estimated corporate tax gap (i.e. gap between estimated effective tax rate and estimated corporate income tax rate), revenue reporting transparency and their involvement in tax-related controversies. This is a Key Issue in the Governance Pillar and is relevant for all companies."
+					}
+				]
+			}
+
+		];
+
+console.log(JSON.stringify(themes));
+</script>
+
+</body>
+</html>

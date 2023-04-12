@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+
+    <!--element css-->
+    <link rel="stylesheet" type="text/css" href="../../../../static/css/element.css"/>
+
+    <!--vue and element js-->
+    <!--NOTE: vue.js should be imported before element.js-->
+    <script src="../../../../static/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../../../static/js/element.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--axios-->
+    <script src="../../../../static/js/axios.js" type="text/javascript" charset="utf-8"></script>
+
+    <style>
+        .el-table .sse-row {
+            background: #c3d5f3;
+        }
+        .el-table .szse-row {
+            background: #dceed5;
+        }
+        .el-table .hkse-row {
+            background: #d6caf3;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="app">
+    <br><br>
+    <h2 align="center">ESG报告生成器</h2>
+    <br>
+
+    <el-container>
+        <el-aside width="100px"></el-aside>
+
+        <el-main>
+
+            <div id="search_box" align="center">
+                <el-form :inline="true" :model="searchCompany">
+                    <el-form-item>
+                        <el-input v-model="searchCompany.name" placeholder="公司名/股票代码"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-select v-model="searchCompany.market" placeholder="交易所">
+                            <el-option label="全部" value="all"></el-option>
+                            <el-option label="上交所" value="sse"></el-option>
+                            <el-option label="深交所" value="szse"></el-option>
+                            <el-option label="港交所" value="hkse"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" icon="el-button-search" @click="onSubmit">搜索</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <div align="center" style="font-size: 14px">
+                示例：
+                <el-button type="text" @click="submitExample('HKSE', '00700', '腾讯控股')">00700</el-button>
+                <el-button type="text" @click="submitExample('SZSE', '300750', '宁德时代')">宁德时代</el-button>
+            </div>
+
+        </el-main>
+
+        <el-aside width="100px"></el-aside>
+    </el-container>
+
+    <div id="stock_table" align="center">
+        <el-container>
+            <el-aside width="100px"></el-aside>
+
+            <el-main>
+                <el-table
+                    :data="foundStocks"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName">
+                    <el-table-column
+                            prop="market"
+                            label="股市"
+                            align="center">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="code"
+                            label="代码"
+                            align="center">
+                    </el-table-column>
+
+                    <el-table-column
+                            prop="name"
+                            label="公司"
+                            align="center">
+                    </el-table-column>
+
+                    <el-table-column
+                            label="操作"
+                            align="center">
+                        {# to obtain the row data, input the button inside the <template></template> #}
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-document" @click="check(scope.row)" size="small" plain>查看</el-button>
+                            <el-button type="primary" icon="el-icon-download" disabled @click="download(scope.row)" size="small" plain>下载</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-main>
+
+            <el-aside width="100px"></el-aside>
+        </el-container>
+    </div>
+
+</div>
+
+<script>
+    const vue = new Vue({
+        el: "#app",
+        data() {
+            return {
+                // ip: "175.159.67.50",
+                ip: "127.0.0.1",
+                // ip: "172.28.146.174",
+                searchCompany: {
+                    "name": "",
+                    "market": "",
+                },
+                news: [],
+                foundStocks: null,
+            }
+        },
+        methods: {
+            tableRowClassName({row}) {
+                if (row.market === "SSE") {
+                    return "sse-row";
+                } else if (row.market === "SZSE") {
+                    return 'szse-row';
+                }
+                return "hkse-row";
+            },
+            onSubmit() {
+                if (this.searchCompany.name === "") {
+                    this.$message.warning("请输入公司名或股票代码");
+                    return;
+                }
+                var exchange = this.searchCompany.market;
+                exchange = exchange === "all"? "": exchange;
+                var url = `http://${this.ip}:8000/companies/search/${this.searchCompany.name}/${exchange}${exchange === ""? "" : "/"}`;
+                axios.get(url).then((res) => {
+                        // res.data.replace(/'/g, '"')
+                        // this.foundStocks = eval("(" + res.data + ")")["codes"];
+                        this.foundStocks = res.data.data.companies;
+                        if (res.data.code === 40000) {
+                            this.$message.warning(res.data.msg);
+                        } else if (res.data.code === 20000) {
+                            this.$message.success(res.data.msg);
+                        } else if (res.data.code === 20001) {
+                            this.$message.info(res.data.msg);
+                        }
+                    });
+            },
+            submitExample(market, code, name) {
+                var row = {
+                    "market": market,
+                    "code": code,
+                    "name": name,
+                };
+                this.check(row);
+            },
+            check(row) {  // axios cannot handle redirect, so use raw js POST
+                // axios.post(`http://${this.ip}:8000/companies/report/`, row)
+
+                var form = document.createElement("form")
+                form.action = `http://${this.ip}:8000/companies/report/`;
+                form.method = "POST";
+
+                for (var k in row) {
+                    // var input;
+                    input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = k;
+                    input.value = row[k];
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+                document.body.remove(form);
+            },
+            download(row) {
+
+            },
+        }
+  });
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <title>ESG report summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bolo is creative one page website template">
+    <meta name="author" content="">
+
+    <!--[if lt IE 9]>
+    <script src="../../../static/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- CSS Files
+    ================================================== -->
+    <link rel="stylesheet" href="../../../static/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="../../../static/css/bootstrap-grid.min.css" type="text/css">
+	<link rel="stylesheet" href="../../../static/css/bootstrap-reboot.min.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/animate.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.carousel.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.theme.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/owl.transitions.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/jquery.countdown.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/style.css" type="text/css">
+    <link rel="stylesheet" href="../../../static/css/colors/red.css" type="text/css">
+
+    <!-- Styles -->
+    <style>
+    #chartdiv {
+      width: 100%;
+      height: 350px;
+    }
+    </style>
+
+    <!--vue and element js-->
+    <!--NOTE: vue.js should be imported before element.js-->
+    <script src="../../../static/js/vue.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--axios-->
+    <script src="../../../static/js/axios.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div id="wrapper">
+
+            <div class="page-overlay">
+                <div class="preloader-wrap">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- header begin -->
+            <header>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- logo begin -->
+                            <div id="logo">
+                                <a href="index.html">
+<!--                                    <img class="logo" src="../../../static/images/logo-light.png" alt="">-->
+<!--                                    <img class="logo-2" src="../../../static/images/logo-dark.png" alt="">-->
+                                    <img class="logo" width="100px" height="50px" src="../../../static/images/logo/companylogo.jpg">
+                                    <img class="logo-2" width="100px" height="50px" src="../../../static/images/logo/companylogo.jpg">
+                                </a>
+                            </div>
+                            <!-- logo close -->
+
+                            <!-- small button begin -->
+                            <span id="menu-btn"></span>
+                            <!-- small button close -->
+
+                            <!-- mainmenu begin -->
+                            <nav>
+                                <ul id="mainmenu">
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="news.html">News</a></li>
+                                    <li><a href="industry.html">Industry</a></li>
+                                    <li><a href="https://epiphany-citi.my.canva.site/" target="_blank">Demo</a></li>
+                                </ul>
+                            </nav>
+                            <!-- mainmenu close -->
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- header close -->
+
+            <div id="content" class="no-bottom no-top">
+                <div id="top"></div>
+                <el-container style="padding-bottom: 0">
+                    <!-- content begin -->
+                    <el-aside width="50px"></el-aside>
+
+                    <el-main width="600px">
+                        <!-- stock info begin -->
+                        <el-descriptions style="font-size: 16px" title="企业信息" border>
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    企业名称
+                                </template>
+                                <div v-text="company.name"></div>
+                            </el-descriptions-item>
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    股票代码
+                                </template>
+                                <div v-text="company.code"></div>
+                            </el-descriptions-item>
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    交易所
+                                </template>
+                                <div v-if="company.market==='HKSE'">
+                                    港交所
+                                </div>
+                                 <div v-if="company.market==='SZSE'">
+                                    深交所
+                                </div>
+                                 <div v-if="company.market==='SSE'">
+                                    上交所
+                                </div>
+                            </el-descriptions-item>
+                        </el-descriptions>
+
+                        <br>
+                        <!-- stock info close -->
+
+                        <div style="width: 520px">
+                            <!-- stock price chart -->
+                            <!-- HTML -->
+                            <h3 style="font-size: 16px">股价信息</h3>
+                            <div id="chartdiv"></div>
+                            <div>
+                                <a :href="stockPriceUrl" target="_blank">点击前往交易所网页查看更多详情</a>
+                            </div>
+                            <!-- stock price char end -->
+                        </div>
+                    </el-main>
+
+                    <el-main width="300px">
+                        <el-main>
+                            <div align="center"><h3 style="font-size: 16px">ESG评级</h3></div>
+                            <el-table
+                                :data="stockRatings"
+                                width="300">
+                                <el-table-column
+                                        prop="agency"
+                                        label="机构"
+                                        width="150px"
+                                        align="center">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="score"
+                                        label="分数"
+                                        width="100px"
+                                        align="center">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="level"
+                                        label="等级"
+                                        align="center">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="date"
+                                        label="日期"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </el-main>
+                    </el-main>
+
+                    <el-aside width="50px"></el-aside>
+
+                </el-container>
+            </div>
+
+
+            <el-container style="padding-top: 0">
+                <el-aside width="50px"></el-aside>
+                <el-main>
+                    <div>
+                        <!-- description of stock info -->
+                        <el-descriptions title="股市信息" border>
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    现价
+                                </template>
+                                <div v-text="stockInfo.curr_price"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    成交额
+                                </template>
+                                <div v-text="stockInfo.volume_dollar"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    成交量
+                                </template>
+                                <div v-text="stockInfo.volume_no"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    总市值
+                                </template>
+                                <div v-text="stockInfo.market_value"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    市盈率 (PE TTM)
+                                </template>
+                                <div v-text="stockInfo.PE_TTM"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    市净率 (PB)
+                                </template>
+                                <div v-text="stockInfo.PB"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    基本每股收益（元）
+                                </template>
+                                <div v-text="stockInfo.eps"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    净资产收益率(ROE)
+                                </template>
+                                <div v-text="stockInfo.return_on_equity"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    总资产净利率(ROA)
+                                </template>
+                                <div v-text="stockInfo.return_on_asset"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    资产负债率
+                                </template>
+                                <div v-text="stockInfo.asset_liability_ratio"></div>
+                            </el-descriptions-item>
+
+                            <el-descriptions-item>
+                                <template slot="label">
+                                    流动比率
+                                </template>
+                                <div v-text="stockInfo.liquid_ratio"></div>
+                            </el-descriptions-item>
+                        </el-descriptions>
+                        <!-- description of stock info end -->
+                    </div>
+                </el-main>
+                <el-aside width="50px"></el-aside>
+            </el-container>
+
+
+            <el-container>
+                <el-aside width="50px"></el-aside>
+                <el-aside width="500px">
+                    <!-- company notice list -->
+                    <h3 align="center" style="font-size: 16px">企业公告</h3>
+                    <el-table
+                        :data="companyNotice"
+                        height="400">
+                        <el-table-column
+                                prop="title"
+                                width="250px"
+                                label="标题 (点击查看)"
+                                align="center">
+                            <template slot-scope="scope">
+                                <a :href="(scope.row.url)" target="_blank" v-text="(scope.row.title)"></a>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="description"
+                                label="描述"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="date"
+                                label="日期"
+                                align="center">
+                        </el-table-column>
+                    </el-table>
+                    <!-- company notice list close -->
+                </el-aside>
+
+                <el-aside width="70px"></el-aside>
+
+                <el-aside width="500px">
+                        <!-- company news -->
+                        <h3 align="center" style="font-size: 16px">企业新闻</h3>
+                        <el-table
+                            :data="companyNews"
+                            height="400">
+                            <el-table-column
+                                    prop="title"
+                                    width="240px"
+                                    label="标题 (点击查看)"
+                                    align="center">
+                                <template slot-scope="scope">
+                                    <a :href="(scope.row.url)" target="_blank" v-text="(scope.row.title)"></a>
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column
+                                    prop="impact"
+                                    label="影响"
+                                    align="center">
+                            </el-table-column>
+
+                            <el-table-column
+                                    prop="score"
+                                    label="分数"
+                                    align="center">
+                            </el-table-column>
+
+                            <el-table-column
+                                    prop="date"
+                                    label="日期"
+                                    align="center">
+                            </el-table-column>
+                        </el-table>
+                        <!-- company news end -->
+                        <div style="padding-top: 10px">
+                            <a :href="'https://www.qcc.com/web/search/newsnotice?key='+company.name" target="_blank">点击查看更多</a>
+                        </div>
+                    </el-aside>
+
+                <el-aside width="50px"></el-aside>
+
+            </el-container>
+
+
+            <el-container style="padding: 0">
+                <el-aside width="50px"></el-aside>
+
+                <el-main>
+                    <h3 align="center">项目流程图</h3>
+                </el-main>
+
+                <el-aside width="50px"></el-aside>
+            </el-container>
+
+            <el-container style="padding: 0">
+                <el-aside width="250px"></el-aside>
+
+                <el-main>
+                    <h3 align="center" v-text="'所属行业: ' + industry"></h3>
+
+                    <el-table
+                        :data="msciData"
+                        style="width: 100%"
+                        height="540">
+                        <el-table-column
+                            prop="category"
+                            label="类别"
+                            width="110px">
+                            <template slot-scope="scope">
+                                <div v-text="scope.row.category"></div>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                            label="详细权重">
+                            <template slot-scope="scope">
+                                <div v-for="(item) of (scope.row.scores)">
+<!--                                    <li v-text="(item.issue)+': '+(item.score)"></li>-->
+                                    <div v-text="(item.issue)+': '"></div>
+                                    <el-progress :percentage="(item.score)" :color="(scope.row.color)"></el-progress>
+                                </div>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+
+                </el-main>
+
+                <el-aside width="250px"></el-aside>
+            </el-container>
+
+
+            <el-container align="center">
+                <el-aside width="100px"></el-aside>
+                <el-main>
+                    <!-- crawler source -->
+                    <h4 align="center" style="font-size: 12px">以上数据爬取自:
+                        <a href="https://www.hkex.com.hk/?sc_lang=zh-HK" target="_blank">香港交易所</a>/
+                        <a href="https://www.hkexnews.hk/index_c.htm" target="_blank">披露易</a>/
+                        <a href="http://www.szse.cn/" target="_blank">深圳证券交易所</a>/
+                        <a href="http://www.sse.com.cn/" target="_blank">上海证券交易所</a>/
+                        <a href="http://www.cninfo.com.cn/new/index" target="_blank">巨潮资讯网</a>/
+                        <a href="https://finance.sina.com.cn/esg/" target="_blank">新浪财经</a>/
+                        <a href="https://www.futunn.com/?lang=zh-CN" target="_blank">富途牛牛</a>
+                    </h4>
+                    <!-- crawler source end -->
+                </el-main>
+                <el-aside width="100px"></el-aside>
+            </el-container>
+
+
+        </div>
+
+        <!-- content close -->
+
+        <a href="#" id="back-to-top"></a>
+
+        <div id="preloader">
+            <div class="preloader1"></div>
+        </div>
+
+    </div>
+
+    <!-- Resources -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+    <script>
+        /* Chart code */
+        am5.ready(function() {
+
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("chartdiv");
+
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([
+          am5themes_Animated.new(root)
+        ]);
+
+        root.dateFormatter.setAll({
+          dateFormat: "yyyy",
+          dateFields: ["valueX"]
+        });
+
+        /*
+        * [{"date": xxx, "value": xxx}, xxx]
+        *
+        * */
+        var company = JSON.parse('{{company|safe}}');
+        var url = `/companies/report/stockprice/${company.code}/${company.market}/d/730/`;
+        var xhr = myXhr("GET", url);
+        var data = JSON.parse(xhr.responseText).data;
+
+        // Create chart
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+          focusable: true,
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX:true
+        }));
+
+        var easing = am5.ease.linear;
+
+        // Create axes
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+        var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
+          maxDeviation: 0.1,
+          groupData: false,
+          baseInterval: {
+            timeUnit: "day",
+            count: 1
+          },
+          renderer: am5xy.AxisRendererX.new(root, {
+
+          }),
+          tooltip: am5.Tooltip.new(root, {})
+        }));
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+          maxDeviation: 0.2,
+          renderer: am5xy.AxisRendererY.new(root, {})
+        }));
+
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+        var series = chart.series.push(am5xy.LineSeries.new(root, {
+          minBulletDistance: 10,
+          connect: false,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          valueXField: "date",
+          tooltip: am5.Tooltip.new(root, {
+            pointerOrientation: "horizontal",
+            labelText: "{valueY}"
+          })
+        }));
+
+        series.fills.template.setAll({
+          fillOpacity: 0.2,
+          visible: true
+        });
+
+        series.strokes.template.setAll({
+          strokeWidth: 2
+        });
+
+
+        // Set up data processor to parse string dates
+        // https://www.amcharts.com/docs/v5/concepts/data/#Pre_processing_data
+        series.data.processor = am5.DataProcessor.new(root, {
+          dateFormat: "yyyy-MM-dd",
+          dateFields: ["date"]
+        });
+
+        series.data.setAll(data);
+
+        series.bullets.push(function() {
+          var circle = am5.Circle.new(root, {
+            radius: 4,
+            fill: root.interfaceColors.get("background"),
+            stroke: series.get("fill"),
+            strokeWidth: 2
+          })
+
+          return am5.Bullet.new(root, {
+            sprite: circle
+          })
+        });
+
+
+        // Add cursor
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+          xAxis: xAxis,
+          behavior: "none"
+        }));
+        cursor.lineY.set("visible", false);
+
+        // add scrollbar
+        chart.set("scrollbarX", am5.Scrollbar.new(root, {
+          orientation: "horizontal"
+        }));
+
+
+        // Make stuff animate on load
+        // https://www.amcharts.com/docs/v5/concepts/animations/
+        chart.appear(1000, 100);
+
+        }); // end am5.ready()
+    </script>
+
+        <!-- Javascript Files
+    ================================================== -->
+        <script src="../../../static/js/jquery.min.js"></script>
+        <script src="../../../static/js/bootstrap.min.js"></script>
+        <script src="../../../static/js/jquery.isotope.min.js"></script>
+        <script src="../../../static/js/easing.js"></script>
+        <script src="../../../static/js/owl.carousel.js"></script>
+        <script src="../../../static/js/jquery.countTo.js"></script>
+        <script src="../../../static/js/wow.min.js"></script>
+        <script src="../../../static/js/jquery.magnific-popup.min.js"></script>
+        <script src="../../../static/js/enquire.min.js"></script>
+        <script src="../../../static/js/jquery.stellar.min.js"></script>
+        <script src="../../../static/js/jquery.plugin.js"></script>
+		<script src="../../../static/js/jquery.easeScroll.js"></script>
+        <script src="../../../static/js/designesia.js"></script>
+        <script src="../../../static/js/validation.js"></script>
+</body>
+
+<script src="../../../static/js/config/encap.js"></script>
+
+<script>
+    /* vue code */
+    const vue = new Vue({
+        el: "#app",
+        data() {
+            return {
+                company: {},
+                stockRatings: [],
+                companyNotice: [],
+                companyNews: [],
+                stockPriceData: [],
+                stockPriceUrl: "",
+                stockInfo: {},
+                msciData: [],
+                industry: "",
+            }
+        },
+        methods: {
+            getCompany() {
+                this.company = JSON.parse('{{company|safe}}');
+                if (this.company !== null) {
+                    this.$message.success("company " + this.company.name + " found");
+                } else {
+                    this.$message.danger("company not found");
+                }
+            },
+            getStockRatings() {
+                url = "/companies/report/rating/";
+                myAxios("post", url, this.company).then((res) => {
+                    this.stockRatings = res.data.data.ratings;
+                })
+            },
+            getCompanyNotice() {
+                var code = this.company.code;
+                var market = this.company.market;
+                url = `/companies/report/notice/${code}/${market}/`;
+                myAxios("get", url).then((res) => {
+                    this.companyNotice = res.data.data.list;
+                })
+            },
+            getCompanyNews() {
+                var url = "/companies/report/news/";
+                myAxios("post", url, this.company).then((res) => {
+                    this.companyNews = res.data.data.enterprise.news;
+                })
+            },
+            generateStockPriceURL() {
+                var company = this.company;
+                if (company.market === "HKSE") {
+                    var count = 0;
+                    for (var i = 0; i < this.company.code.length; i++) {
+                        if (this.company.code[i] === '0') {
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+                    var code = this.company.code.substring(count, this.company.code.length);
+                    this.stockPriceUrl = `https://www.hkex.com.hk/Market-Data/Securities-Prices/Equities/Equities-Quote?sym=${code}&sc_lang=zh-hk`;
+                } else if (company.market === "SZSE") {
+                    this.stockPriceUrl = `http://www.szse.cn/market/trend/index.html?code=${company.code}`;
+                } else {
+                    this.stockPriceUrl = `http://www.sse.com.cn/home/search/?webswd=${company.code}`;
+                }
+            },
+            getStockInfo() {
+                var company = this.company;
+                var url = `/companies/report/stockinfo/${company.code}/${company.market}/`;
+                myAxios("get", url).then((res) => {
+                   this.stockInfo = res.data.data.stock_info;
+                });
+            },
+            getMsciData() {
+                var url = `/companies/report/score/sector/company/${this.company.code}/${this.company.market}/`;
+                myAxios("get", url).then((res) => {
+                    if (res.data.code === 20000) {
+                        this.industry = res.data.data.industry;
+                        let data = res.data.data.detail;
+                        for (k in data) {
+                            const scores = [];
+                            console.log(data[k]);
+                            for (issue of data[k]) {
+                                for (k1 in issue) {
+                                    scores.push({"issue": k1, "score": issue[k1]});
+                                }
+                            }
+                            let color = k === "environment"? "green": (k === "social"? "blue": "red");
+                            this.msciData.push({"category": k, "scores": scores, "color": color});
+                        }
+                        console.log(this.msciData);
+                    } else {
+                        this.$message.info("cannot identify the industry the company belongs to");
+                    }
+                })
+            }
+        },
+        mounted() {
+            this.getCompany();
+            this.getStockRatings();
+            this.getCompanyNotice();
+            this.generateStockPriceURL();
+            this.getStockInfo();
+            this.getCompanyNews();
+            this.getMsciData();
+        },
+    })
+</script>
+
+</html>

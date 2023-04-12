@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ESG Report</title>
+
+    <!--element css-->
+    <link rel="stylesheet" type="text/css" href="../../../../static/css/element.css"/>
+
+    <!--vue and element js-->
+    <!--NOTE: vue.js should be imported before element.js-->
+    <script src="../../../../static/js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../../../static/js/element.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--axios-->
+    <script src="../../../../static/js/axios.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <el-container>
+        <el-container>
+            <el-aside width="100px"></el-aside>
+
+            <el-main>
+
+                <div align="center">
+                    <div v-html="stock_name"></div>
+                    <div v-html="stock_market"></div>
+                    <div v-html="stock_code"></div>
+                </div>
+
+                <br>
+                <el-divider></el-divider>
+                <br>
+
+                <div align="center"><h2>ESG评级</h2></div>
+                <el-table
+                        :data="stockRatings"
+                        style="width: 100%"
+                        height="300">
+                        <el-table-column
+                                prop="agency"
+                                label="机构"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="score"
+                                label="分数"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="level"
+                                label="等级"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="date"
+                                label="日期"
+                                align="center">
+                        </el-table-column>
+                    </el-table>
+                    <div style="font-size: 10px"><p>数据爬取自：新浪财经</p></div>
+
+            </el-main>
+
+            <el-aside width="100px"></el-aside>
+        </el-container>
+
+        <br><br><br>
+        <el-divider></el-divider>
+        <br><br><br>
+
+        <el-footer>
+            <el-container>
+                <el-aside width="100px"></el-aside>
+                <el-main>
+
+                    <div align="center"><h2>ESG新闻资讯</h2></div>
+                    <template>
+                        <el-select v-model="topNewsCid"
+                                   placeholder="新闻类别"
+                                   @change="handleTopNewsChange">
+                            <el-option
+                                v-for="item in topNewsOption"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </template>
+
+                    <el-table
+                        :data="topNews"
+                        style="width: 100%"
+                        height="300">
+                        <el-table-column
+                                prop="pic_url"
+                                label=""
+                                align="center">
+                            <template slot-scope="scope">
+                                <img :src=(scope.row.pic_url) style="width:50px; height:60px">
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="title"
+                                label="标题"
+                                width="370"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="publish_time"
+                                label="刊登时间"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="source"
+                                label="来源"
+                                align="center">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="url"
+                                label="网址"
+                                align="center">
+                            <template slot-scope="scope">
+                                <el-button type="info" @click="redirectUrl(scope.row)">前往网址</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <!--<div class="pagination">
+                        <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page.sync="topNewsPagination.page"
+                            :page-sizes="[10, 15, 30, 50]"
+                            :page-size="topNewsPagination.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="topNewsPagination.total">
+                        </el-pagination>
+                        <div style="font-size: 10px"><p>数据爬取自：新浪财经</p></div>
+                    </div>-->
+                </el-main>
+                <el-aside width="100px"></el-aside>
+            </el-container>
+        </el-footer>
+    </el-container>
+</div>
+
+<script>
+    const vue = new Vue({
+        el: "#app",
+        data() {
+            return {
+                // ip: "175.159.67.50",
+                ip: "127.0.0.1",
+                // ip: "172.28.146.174",
+                stock_name: "",
+                stock_market: "",
+                stock_code: "",
+                stock: {},
+                stockNews: [],
+                topNews: [],
+                topNewsPagination: {
+                    "page": 1,
+                    "pageSize": 10,
+                    "total": 10,
+                },
+                topNewsOption: [
+                    {label: '主要新闻', value: '244215'},
+                    {label: '环境保护', value: '247831'},
+                    {label: '社会责任', value: '247832'},
+                    {label: '公司管治', value: '247833'},
+                    {label: 'ESG投资', value: '248417'}
+                ],
+                topNewsCid: "244215",
+                stockRatings: [],
+            }
+        },
+        methods: {
+            handleSizeChange(val) {
+                this.topNewsPagination.pageSize = val;
+                this.getTopNews();
+            },
+            handleCurrentChange(val) {
+                this.topNewsPagination.page = val;
+                this.getTopNews();
+            },
+            redirectUrl(row) {
+                window.open(row.url, "_blank");
+            },
+            handleTopNewsChange() {
+                this.getTopNews();
+            },
+            getStock() {
+                this.stock = JSON.parse('{{company|safe}}');
+                if (this.stock.code === undefined) {
+                    this.stock = {
+                        "market": "HKSE",
+                        "code": "00700",
+                        "name": "TX",
+                    };
+                }
+                this.stock_name = "<h3>股票: " + this.stock.name + "</h3>";
+                this.stock_market = "<h3>交易所: " + this.stock.market + "</h3>";
+                this.stock_code = "<h3>代码: " + this.stock.code + "</h3>";
+            },
+            getTopNews() {
+                axios.get(`http://${this.ip}:8000/companies/topnews/${this.topNewsCid}/${this.topNewsPagination.page}/${this.topNewsPagination.pageSize}/`)
+                    .then((res) => {
+                        this.topNews = res.data.data.top_news.list;
+                        this.topNewsPagination.total = res.data.data.total;
+                        this.$message.info(res.data.msg);
+                    })
+            },
+            getReportNews() {
+                axios.post(`http://${this.ip}:8000/companies/report/news/`, this.stock)
+                    .then((res) => {
+                        this.stockNews = res.data.data.news;
+                        this.$message.info(res.data.msg);
+                    })
+            },
+            getEsgRatings() {
+                axios.post(`http://${this.ip}:8000/companies/report/rating/`, this.stock)
+                    .then((res) => {
+                        this.stockRatings = res.data.data.ratings;
+                        this.$message.info(res.data.msg);
+                    })
+            },
+        },
+        mounted() {  /* created() will be executed before mounted */
+            this.getStock();
+            this.getReportNews();
+            this.getTopNews();
+            this.getEsgRatings();
+        }
+    })
+</script>
+
+</body>
+
+</html>

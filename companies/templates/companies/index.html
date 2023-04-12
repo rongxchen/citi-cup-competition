@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zxx">
+    <head>
+        <meta charset="utf-8" />
+        <title>Epiphany ESG Platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description"/>
+        <meta name="author" content="" />
+
+        <!--[if lt IE 9]>
+            <script src="../../../static/js/html5shiv.js"></script>
+        <![endif]-->
+
+        <!-- CSS Files
+                ================================================== -->
+        <link rel="stylesheet" href="../../../static/css/bootstrap.min.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/bootstrap-grid.min.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/bootstrap-reboot.min.css" type="text/css"/>
+        <link rel="stylesheet" href="../../../static/css/animate.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/owl.carousel.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/owl.theme.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/owl.transitions.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/magnific-popup.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/jquery.countdown.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/style.css" type="text/css" />
+        <link rel="stylesheet" href="../../../static/css/colors/red.css" type="text/css" />
+
+        <!--vue and element js-->
+        <!--NOTE: vue.js should be imported before element.js-->
+        <script src="../../../static/js/vue.js" type="text/javascript" charset="utf-8"></script>
+
+        <!--axios-->
+        <script src="../../../static/js/axios.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <!-- 引入组件库 -->
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+        <style>
+            /*for scrolling news*/
+            .el-carousel__item h3 {
+                color: #475669;
+                font-size: 15px;
+                opacity: 0.75;
+                line-height: 30px;
+                margin: 0;
+            }
+            .el-carousel__item h2 {
+                color: #475669;
+                font-size: 12px;
+                opacity: 0.75;
+                line-height: 0;
+                margin: 0;
+            }
+
+            /*for cards*/
+            .cardList {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .cardList .el-card {
+                height: 280px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">
+            <div id="wrapper">
+                <div class="page-overlay">
+                    <div class="preloader-wrap">
+                        <div class="spinner">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- header begin -->
+                <header>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- logo begin -->
+                                <div id="logo">
+                                    <a href="index.html">
+                                        <img class="logo" width="100px" height="50px" src="../../../static/images/logo2.png">
+                                        <img class="logo-2" width="100px" height="50px" src="../../../static/images/logo2.png">
+                                    </a>
+                                </div>
+                                <!-- logo close -->
+    
+                                <!-- small button begin -->
+                                <span id="menu-btn"></span>
+                                <!-- small button close -->
+    
+                                <!-- mainmenu begin -->
+                                <nav>
+                                    <ul id="mainmenu">
+                                        <li><a href="index.html">Home</a></li>
+                                        <li><a href="news.html">News</a></li>
+                                        <li><a href="industry.html">Industry</a></li>
+                                        <li><a href="https://epiphany-citi.my.canva.site/" target="_blank">Demo</a></li>
+                                    </ul>
+                                </nav>
+                                <!-- mainmenu close -->
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <!-- header close -->
+
+                <!-- content begin -->
+                <div id="content" class="no-bottom no-top">
+                    <div id="top"></div>
+                    <br/><br/>
+
+                    <!-- section begin -->
+                    <!-- cases list -->
+                    <el-container>
+                        <el-aside width="100px"></el-aside>
+                        <el-main style="padding-top: 0">
+                            <h3 align="center" style="font-size: 16px">Report Summary</h3>
+                            <template>
+                                <div align="center">
+                                <el-input type="text" style="width:300px;" v-model="input" placeholder="company name / stock code"></el-input>
+                                <!-- <el-input type="text" style="width:300px;" v-model="stockNumber" placeholder="Stock Number"></el-input> -->
+                                <el-select v-model="stockMarket" filterable placeholder="market">
+                                        <el-option
+                                            v-for="item in marketList"
+                                            :key="item"
+                                            :label="item"
+                                            :value="item">
+                                        </el-option>
+                                </el-select>
+                                <el-button type="info" @click="handleSearch">Search</el-button>
+                            </div>
+                        </template>
+                            <br><br>
+
+                            <section id="cards" style="padding-top: 0; padding-bottom: 0">
+                                <template>
+                                    <el-row
+                                        :gutter="20"
+                                        v-for="i in (pagination.total/4)"
+                                        :key="i"
+                                        class="cardList"
+                                    >
+                                        <el-col
+                                            v-for="(cases, index) in casesList.slice((i-1)*4, i*4)"
+                                            :key="index"
+                                            :span="6"
+                                        >
+                                            <div v-if="(cases) !== null">
+                                                <el-card class="Cases">
+                                                    <a :href="cases?.url" target="_blank">
+                                                        <!-- url to the company report -->
+                                                        <img align="center"
+                                                            :src="cases.image"
+                                                            width="180px"
+                                                            height="140px"/>
+                                                        <br><br>
+                                                        <h3 style="font-size: 12px;" v-text="cases.name"></h3>
+                                                        <h3 style="font-size: 12px;" v-text="'股票代码: '+cases.code"></h3>
+                                                        <h3 style="font-size: 12px;" v-text="'交易所: '+cases.market"></h3>
+                                                    </a>
+                                                </el-card>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                </template>
+                            </section>
+
+                            <br />
+
+                            <template>
+                                <!-- pagination -->
+                                <div style="padding-top: 0; padding-bottom: 0" class="block" align="center">
+                                    <el-pagination
+                                        :current-page="pagination.currentPage"
+                                        :page-size="pagination.total"
+                                        layout="total"
+                                        :total="pagination.total"
+                                    >
+                                        <!--@size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange"-->
+                                    </el-pagination>
+                                </div>
+                            </template>
+                            <br />
+                        </el-main>
+                        <el-aside width="100px"></el-aside>
+                    </el-container>
+                    <!-- section close -->
+
+                    <el-divider></el-divider>
+
+                    <br><br>
+
+                    <!-- section begin-->
+                    <!-- scrolling list -->
+                    <h2 align="center">ESG投资</h2>
+                    <template>
+                        <el-carousel
+                            indicator-position="outside"
+                            :interval="4000"
+                            arrow="always"
+                            type="card"
+                            height="350px"
+                            :autoplay="true"
+                        >
+                            <el-carousel-item
+                                v-for="(news, index) in scrollNewsList"
+                                :key="index"
+                            >
+                                <a :href="news.url" target="_blank">
+                                    <div align="center">
+                                        <img :src="news.pic_url" width="480px" height=300px">
+                                    </div>
+                                </a>
+                                <h3
+                                    class="medium"
+                                    align="center"
+                                    v-text="news.title"
+                                    style="width: 90%;"
+                                ></h3>
+                                <h2
+                                    class="medium"
+                                    align="center"
+                                    v-text="news.source+'     '+news.publish_time.split(' ')[0]"
+                                    style="width: 90%;"
+                                ></h2>
+                            </el-carousel-item>
+                        </el-carousel>
+                    </template>
+                    <el-divider></el-divider>
+                    <!--section close-->
+
+                    <!-- section begin -->
+                    <!-- esg -->
+                    <section data-bgcolor="#f9f9f9">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <img
+                                        src="../../../static/images/esg.jpg"
+                                        class="mb-sm-30 img-fluid"
+                                        alt=""
+                                    />
+                                </div>
+    
+                                <div class="col-md-5 offset-md-1">
+                                    <h2 class="mb20">
+                                        What is ESG?
+                                    </h2>
+                                    <p>
+                                        ESG is an investment philosophy and corporate rating standard 
+                                        that focuses on a company's environmental, social, and governance performance rather than its financial performance.
+                                    </p>
+                                    <div class="spacer-half"></div>
+                                </div>
+    
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="spacer-half"></div>
+
+                            <div class="row align-items-center">
+                                <div class="col-md-5 offset-md-1">
+                                    <h2 class="mb20">
+                                        Why ESG?
+                                    </h2>
+                                    <p>
+                                        <ul>
+                                            <li>The evaluation results of ESG will affect the potential investment results of socially conscious investors.</li>
+                                            <li>ESG can improve the sustainability of companies and better respond to environmental and climate changes.</li>
+                                            <li>Companies with excellent ESG performance can effectively counteract the risks of global economic instability or even recession and bring positive returns to the company.</li>
+                                        </ul>
+                                    </p>
+                                    <div class="spacer-half"></div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <img
+                                        src="../../../static/images/shy_esg.png"
+                                        class="mb-sm-30 img-fluid"
+                                        alt=""
+                                    />
+                                </div>
+    
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </section>
+                    <el-divider></el-divider>
+                    <!-- section close -->
+    
+                    <div id="loader-area">
+                        <div class="container">
+                            <div class="project-load"></div>
+                        </div>
+                    </div>
+
+                    <el-container>
+                        <el-aside width="50px"></el-aside>
+                        <el-main>
+                            <a href="news.html"><h3 align="center" style="font-size: 16px;">News</h3></a>
+                            <el-table :data="commentList" height="500">
+                                <el-table-column
+                                    prop="title"
+                                    label="Title"
+                                    align="center"
+                                >
+                                    <template slot-scope="scope">
+                                        <a
+                                            :href="(scope.row.url)"
+                                            target="_blank"
+                                            v-text="(scope.row.title)"
+                                        ></a>
+                                    </template>
+                                </el-table-column>
+    
+                                <el-table-column prop="date" label="Date" align="center">
+                                    <template slot-scope="scope">
+                                        <h4
+                                        class="medium"
+                                        align="center"
+                                        v-text="(scope.row.date)"
+                                    ></h4>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+    
+                        </el-main>
+
+                        <el-aside width="600px">
+                            <a href="industry.html"><h3 align="center" style="font-size: 16px;">Industry</h3></a>
+
+                            <h4>Please select sector/subsector</h4>
+                            <!-- sector selector -->
+
+                            <template>
+                                    <el-select v-model="sectorSelected" filterable placeholder="行业" @change="handleSectorSelectorChange">
+                                            <el-option
+                                                v-for="item in sectorList"
+                                                :key="item.name"
+                                                :label="item.name"
+                                                :value="item.sector_id">
+                                            </el-option>
+                                    </el-select>
+
+                                    <el-select
+                                            v-model="subsectorSelected"
+                                            style="margin-left: 20px;"
+                                            filterable placeholder="子行业"
+                                            @change="handleSubsectorSelectorChange">
+                                            <el-option
+                                                v-for="item in specificSubsectorList"
+                                                :key="item.name"
+                                                :label="item.name"
+                                                :value="item.id">
+                                            </el-option>
+                                    </el-select>
+                            </template>
+
+                            <el-table
+                                    :data="sectorScoreTable"
+                                    style="width: 100%"
+                                    height="450">
+                                    <el-table-column
+                                            prop="category"
+                                            label="类别"
+                                            width="110px">
+                                            <template slot-scope="scope">
+                                                    <div v-text="scope.row.category"></div>
+                                            </template>
+                                    </el-table-column>
+
+                                    <el-table-column
+                                            label="详细权重">
+                                            <template slot-scope="scope">
+                                                    <div v-for="(item) of (scope.row.scores)">
+<!--                                                                        <li v-text="(item.issue)+': '+(item.score)"></li>-->
+                                                            <div v-text="(item.issue)+': '"></div>
+                                                            <el-progress :percentage="(item.score)" :color="(scope.row.color)"></el-progress>
+                                                    </div>
+                                            </template>
+                                    </el-table-column>
+
+                            </el-table>
+                            <!-- sector selector end -->
+                    </el-aside>
+                    </el-container>
+    
+                </div>
+                <!-- content close -->
+    
+                <a href="#" id="back-to-top"></a>
+    
+                <div id="preloader">
+                    <div class="preloader1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Javascript Files
+        ================================================== -->
+        <script src="../../../static/js/jquery.min.js"></script>
+        <script src="../../../static/js/bootstrap.min.js"></script>
+        <script src="../../../static/js/jquery.isotope.min.js"></script>
+        <script src="../../../static/js/easing.js"></script>
+        <script src="../../../static/js/owl.carousel.js"></script>
+        <script src="../../../static/js/jquery.countTo.js"></script>
+        <script src="../../../static/js/wow.min.js"></script>
+        <script src="../../../static/js/jquery.magnific-popup.min.js"></script>
+        <script src="../../../static/js/enquire.min.js"></script>
+        <script src="../../../static/js/jquery.stellar.min.js"></script>
+        <script src="../../../static/js/jquery.plugin.js"></script>
+        <script src="../../../static/js/jquery.easeScroll.js"></script>
+        <script src="../../../static/js/designesia.js"></script>
+        <script src="../../../static/js/validation.js"></script>
+    </body>
+
+    <script src="../../../static/js/config/encap.js"></script>
+
+    <script>
+        const vue = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    scrollNewsList: [],
+                    sizeOfScrollNewsList: 15,
+                    input: "",
+                    // stockNumber:"",
+                    stockMarket: "",
+                    marketList: ["HKSE","SSE","SZSE"],
+                    casesList: [
+                    {
+                        "name": "贵州茅台",
+                        "code": "600519",
+                        "market": "SSE",
+                        "url":''
+                    },
+                    {
+                        "name": "比亚迪",
+                        "code": "01211",
+                        "market": "HKSE",
+                        "url":''
+                    },
+                    {
+                        "name": "浦发银行",
+                        "code": "600000",
+                        "market": "SSE",
+                        "url":''
+                    },
+                    {
+                        "name": "腾讯控股",
+                        "code": "00700",
+                        "market": "HKSE",
+                        "url":''
+                    },
+                    ],
+                    investmentNewsId: "248417",
+                    pagination: {
+                        currentPage: 1,
+                        pageSize: 4,
+                        total: 4
+                    },
+                    commentList:[],
+                    sectorList: [],
+                    randomSubsectorList: [],
+                    activityName: [],
+                    sectorSelected: "",
+                    specificSubsectorList: [],
+                    subsectorSelected: "",
+                    sectorScoreTable: [],
+                };
+            },
+            methods: {
+                getScrollNewsList() {
+                    url = "/companies/topnews/" + this.investmentNewsId + "/1/" + this.sizeOfScrollNewsList + "/";
+                    myAxios("get", url).then((res) => {
+                        this.scrollNewsList = res.data.data.top_news.list;
+                    });
+                },
+                getCasesList() {
+                    for (var i = 0; i < this.casesList.length; i++){
+                        var obj = this.casesList[i];
+                        obj.url = "/report.html?name="+obj["name"]+ "&code="+obj["code"]+ "&market="+ obj["market"];
+                        obj.image= "../../../static/images/"+obj["market"]+".png";
+                    }
+                },
+                getComments() {
+                    url = "/companies/topnews/eng/";
+                    myAxios("get", url).then((res) => {
+                        this.commentList = res.data.data.list;
+                    });
+                },
+                handleTopNewsChange() {
+                    this.getCasesList();
+                },
+                handleCurrentChange(val) {
+                    this.pagination.currentPage = val;
+                    this.getCasesList();
+                },
+                handleSizeChange(val) {
+                    this.pagination.pageSize = val;
+                    this.getCasesList();
+                },
+                handleRedirect(row) {
+                    window.open(row.url, "_blank");
+                },
+                getSectorList() {
+                    var url = "/companies/report/score/sectorlist/";
+                    myAxios("get", url).then((res) => {
+                        this.sectorList = res.data.data;
+                        for (var i = 0; i < this.sectorList.length; i++) {
+                            const subsectors = this.sectorList[i].subsectors;
+                            for (var j = 0; j < subsectors.length; j++) {
+                                if (subsectors[j].scores.environment.length !== 0 && subsectors[j].scores.social.length !== 0 && subsectors[j].scores.governance.length !== 0) {
+                                    this.randomSubsectorList.push(subsectors[j]);
+                                    this.activityName.push(subsectors[j].name + "_environment");
+                                }
+                            }
+                        }
+                        this.randomSubsectorList.sort(() => 0.5 - Math.random());
+                    })
+                },
+                handleSectorSelectorChange(val) {
+                    this.sectorScoreTable = [];
+                    this.specificSubsectorList = [];
+                    this.subsectorSelected = "";
+                    this.sectorSelected = val;
+                    for (item of this.sectorList) {
+                        if (item.sector_id === this.sectorSelected) {
+                            for (cate in item.scores) {
+                                const scores = [];
+                                for (issue of item.scores[cate]) {
+                                    for (k in issue) {
+                                        scores.push({"issue": k, "score": issue[k]});
+                                    }
+                                }
+                                var color = cate === "environment"? "green": (cate === "social"? "blue": "red");
+                                this.sectorScoreTable.push({"category": cate, "scores": scores, "color": color});
+                            }
+                            for (i2 of item.subsectors) {
+                                    this.specificSubsectorList.push({"name": i2.name, "id": i2.subsector_id});
+                            }
+                            break;
+                        }
+                    }
+                },
+                handleSubsectorSelectorChange(val) {
+                    this.sectorScoreTable = [];
+                    this.subsectorSelected = val;
+                    url = `/companies/report/score/subsector/${this.subsectorSelected}/`;
+                    myAxios("get", url).then((res) => {
+                        var data = res.data.data;
+                        for (item in data) {
+                            const scores = []
+                            for (issue of data[item]) {
+                                for (k in issue) {
+                                    scores.push({"issue": k, "score": issue[k]});
+                                }
+                            }
+                            var color = item === "environment"? "green": (item === "social"? "blue": "red");
+                            this.sectorScoreTable.push({"category": item, "scores": scores, "color": color});
+                        }
+                    })
+                },
+                handleSearch() {
+                    // if (this.companyName!=''&&this.stockNumber!=''&&this.stockMarket!=''){
+                    //     url =
+                    //     "http://" +
+                    //     this.ip+"/report.html?name="+this.companyName+
+                    //     "&code="+this.stockNumber+
+                    //     "&market="+ this.stockMarket+
+                    //     "/";
+                    //     window.open(url, "_blank");
+                    // }else{
+                    //     this.$message({
+                    //             dangerouslyUseHTMLString:true,
+                    //             message:'Please fill all fields.',
+                    //             type:'warning',
+                    //             center:true,
+                    //             showClose:true
+                    //     })
+                    // }
+
+                    // if (this.input !== '' && this.stockMarket !== ''){
+                    //     stockNumber = this.input.replace(/[^0-9]/ig, "");
+                    //     companyName= this.input.replace(/[^\u4E00-\u9FA5]/g, "")
+                    //     if (companyName === ''){
+                    //         companyName = this.input.replace(/[^a-zA-Z]/g, "")
+                    //     }
+                    //     url = "/report.html?name="+companyName+ "&code="+stockNumber+ "&market="+ this.stockMarket;
+                    //     window.open(url, "_blank");
+                    // } else{
+                    //     this.$message({
+                    //             dangerouslyUseHTMLString:true,
+                    //             message:'Please fill all fields.',
+                    //             type:'warning',
+                    //             center:true,
+                    //             showClose:true
+                    //     })
+                    // }
+
+                    url = `/companies/search/${this.input}/${this.stockMarket}`;
+                    myAxios("get", url).then((res) => {
+                        this.casesList = res.data.data.companies;
+                        var total = res.data.data.total;
+                        this.pagination.pageSize = total;
+                        this.pagination.total = total;
+                        this.getCasesList();
+
+                        if (total > 0) {
+                            this.$message.success(`${total} companies found`);
+                        } else {
+                            this.$message.info("no companies found");
+                        }
+
+                        if (total % 4 !== 0) {
+                            for (let i = 0; i < 4-(total % 4); i++) {
+                                // this.casesList.push({"market": "", "name": "", "code": "", "url": "", "img": ""});
+                                this.casesList.push(null);
+                                this.pagination.total++;
+                                this.pagination.pageSize++;
+                            }
+                        }
+                        /*v-for="i in pagination.total/4"
+                                    :key="i"
+                                    class="cardList"
+                                >
+                                    <el-col
+                                        v-for="(cases, index) in casesList.slice((i-1)*4, i*4)"
+                                        :key="index"
+                                        :span="6"*/
+                    })
+                },
+                handleHeaderSearch() {
+                    if (this.stockMarket === "" || this.input === "") {
+                        this.$message.warning("please enter / select both stock code / market");
+                        return;
+                    }
+
+                    if (this.stockMarket === "HKSE") {
+                        if (this.input.length !== 5) {
+                            this.$message.warning("enter complete & correct stock code");
+                            return;
+                        }
+                    } else {
+                        if (this.input.length !== 6) {
+                            this.$message.warning("enter complete & correct stock code");
+                            return;
+                        }
+                    }
+
+                    url = `/companies/search/${this.input}/${this.stockMarket}`;
+                    myAxios(url).then((res) => {
+                        var obj =  res.data.data.companies[0];
+                        window.open(`/report.html?name=${obj.name}&code=${this.input}&market=${this.stockMarket}`);
+                    })
+                }
+            },
+            mounted() {
+                this.getScrollNewsList();
+                this.getCasesList();
+                this.getComments();
+                this.getSectorList();
+            }
+        });
+    </script>
+</html>

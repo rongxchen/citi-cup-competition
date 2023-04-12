@@ -1,0 +1,24 @@
+/* general settings for section & subheader */
+section,#subheader{
+-webkit-background-size: 100%;
+-moz-background-size: 100%;
+-o-background-size: 100%;
+background-size: 100%;
+}
+
+/* background settings for section */
+#section-overview {background:url(../images/background/1.jpg) fixed;}
+#section-side-1.side-bg .image-container{background:url(../images/background/1.jpg);}
+
+
+/* media query */
+@media only screen and (max-width: 767) {
+	section{
+	-webkit-background-size: auto 100% !important;
+	-moz-background-size: auto 100% !important;
+	-o-background-size: auto 100% !important;
+	background-size: auto 100% !important;
+	background-attachment:scroll !important;
+	background-position:top !important;
+	}
+}
